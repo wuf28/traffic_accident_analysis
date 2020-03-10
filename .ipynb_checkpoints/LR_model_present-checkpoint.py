@@ -74,7 +74,7 @@ def test_parameter_CV(X_train,y_train,test_x,test_y,cv,C,penalty,classweight,mul
 def build_model_LR(X_train,y_train,test_x,test_y,C,penalty,classweight,multiclass,solvertype,cv=0):
       if cv == 0:
           result, all_model = test_parameter(X_train,y_train,test_x,test_y,C,penalty,classweight,multiclass,solvertype)
-           csv_name = 'LR_pnlt_{}_cw_{}_mltcls_{}_svr_{}_mdlnum_{}_noncv_accuracy.csv'.format(penalty,classweight,multiclass,solvertype,len(all_model))
+          csv_name = 'LR_pnlt_{}_cw_{}_mltcls_{}_svr_{}_mdlnum_{}_noncv_accuracy.csv'.format(penalty,classweight,multiclass,solvertype,len(all_model))
       else:
           result, all_model = test_parameter_CV(X_train,y_train,test_x,test_y,cv,C,penalty,classweight,multiclass,solvertype)
           csv_name = 'LRCV_pnlt_{}_cw_{}_mltcls_{}_svr_{}_mdlnum_{}_cv_{}_accuracy.csv'.format(penalty,classweight,multiclass,solvertype,len(all_model),cv)

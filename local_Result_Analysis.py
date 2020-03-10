@@ -18,6 +18,7 @@ def Cost_Per_Accident(output,sum_col,DC_Victim,DC_Accident):
   for col in sum_col:
     new_col = col+'_Acc' # means per accident
     Acc_Cost[new_col] = output_grouped[col].sum()#adding all victims in single accident DC together 
+    Acc_Cost['per_vic_avg_'+new_col] = output_grouped[col].mean()
 
   Acc_Cost['C_ISEV_REAL'] = output_grouped['P_ISEV_REAL'].max()
   Acc_Cost['C_ISEV_PREDICT'] = output_grouped['P_ISEV_PREDICT'].max()
@@ -36,9 +37,11 @@ def Cost_Per_Accident(output,sum_col,DC_Victim,DC_Accident):
 
 def error_analysis(Acc_Cost):
   error = pd.DataFrame()
-  error["Predict_Total_Error"] = ((Acc_Cost.Accident_Predict_Total - Acc_Cost.Accident_Real_Total)/Acc_Cost.Accident_Real_Total)
-  error["Predict_EXP_Total_Error"] = ((Acc_Cost.Accident_Predict_EXP_Total - Acc_Cost.Accident_Real_Total)/Acc_Cost.Accident_Real_Total)
-  
+  error["Predict_Total_Error_%"] = (100*(Acc_Cost.Accident_Predict_Total - Acc_Cost.Accident_Real_Total)/Acc_Cost.Accident_Real_Total)
+  error["Predict_EXP_Total_Error_%"] = (100*(Acc_Cost.Accident_Predict_EXP_Total - Acc_Cost.Accident_Real_Total)/Acc_Cost.Accident_Real_Total)
+  error["Predict_Total_Error_$"] = Acc_Cost.Accident_Predict_Total - Acc_Cost.Accident_Real_Total
+  error["Predict_EXP_Total_Error_$"] = Acc_Cost.Accident_Predict_EXP_Total - Acc_Cost.Accident_Real_Total
+
   error["Predict_Accident_type_Error"] = ((Acc_Cost.Accident_type_Cost_Predict - Acc_Cost.Accident_type_Cost_Real)/Acc_Cost.Accident_type_Cost_Real)
   error["Predict_Accident_type_EXP_Error"] = ((Acc_Cost.Accident_type_Cost_Predict_EXP - Acc_Cost.Accident_type_Cost_Real)/Acc_Cost.Accident_type_Cost_Real)
   
@@ -51,12 +54,19 @@ def error_analysis(Acc_Cost):
   error["Acc_Predict_Absolute_Prob_Injury_Error"] = Acc_Cost.Absolute_Injury_Prob_Acc - Acc_Cost.Real_Injury_Prob_Acc
   error["Acc_Predict_EXP_Prob_Fatal_Error"] = Acc_Cost.Prob_Fatal_Acc - Acc_Cost.Real_Fatal_Prob_Acc
   error["Acc_Predict_Absolute_Prob_Fatal_Error"] = Acc_Cost.Absolute_Fatal_Prob_Acc - Acc_Cost.Real_Fatal_Prob_Acc
+                                        
+  error["per_vic_avg_Acc_Predict_EXP_Prob_PDO_Error"] = Acc_Cost.per_vic_avg_Prob_PDO_Acc - Acc_Cost.per_vic_avg_Real_PDO_Prob_Acc
+  error["per_vic_avg_Acc_Predict_Absolute_Prob_PDO_Error"] = Acc_Cost.per_vic_avg_Absolute_PDO_Prob_Acc - Acc_Cost.per_vic_avg_Real_PDO_Prob_Acc
+  error["per_vic_avg_Acc_Predict_EXP_Prob_Injury_Error"] = Acc_Cost.per_vic_avg_Prob_Injury_Acc - Acc_Cost.per_vic_avg_Real_Injury_Prob_Acc
+  error["per_vic_avg_Acc_Predict_Absolute_Prob_Injury_Error"] = Acc_Cost.per_vic_avg_Absolute_Injury_Prob_Acc - Acc_Cost.per_vic_avg_Real_Injury_Prob_Acc
+  error["per_vic_avg_Acc_Predict_EXP_Prob_Fatal_Error"] = Acc_Cost.per_vic_avg_Prob_Fatal_Acc - Acc_Cost.per_vic_avg_Real_Fatal_Prob_Acc
+  error["per_vic_avg_Acc_Predict_Absolute_Prob_Fatal_Error"] = Acc_Cost.per_vic_avg_Absolute_Fatal_Prob_Acc - Acc_Cost.per_vic_avg_Real_Fatal_Prob_Acc
     
   cm_accident_type = confusion_matrix(Acc_Cost['C_ISEV_REAL'], Acc_Cost['C_ISEV_PREDICT'])
-  error['Accident_PDO_Accuracy'] = (cm_accident_type[0,0]/np.sum(cm_accident_type[0]))**2
-  error['Accident_Injur_Accuracy'] = (cm_accident_type[1,1]/np.sum(cm_accident_type[1]))**2
-  error['Accident_Fatal_Accuracy'] = (cm_accident_type[2,2]/np.sum(cm_accident_type[2]))**2
-  error['Accident_Total_Accuracy'] = (np.trace(cm_accident_type)/cm_accident_type.sum())**2
+  error['Accident_PDO_Accuracy'] = (cm_accident_type[0,0]/np.sum(cm_accident_type[0]))
+  error['Accident_Injur_Accuracy'] = (cm_accident_type[1,1]/np.sum(cm_accident_type[1]))
+  error['Accident_Fatal_Accuracy'] = (cm_accident_type[2,2]/np.sum(cm_accident_type[2]))
+  error['Accident_Total_Accuracy'] = (np.trace(cm_accident_type)/cm_accident_type.sum())
   error['Accident_Type_Error'] = Acc_Cost['C_ISEV_PREDICT'] - Acc_Cost['C_ISEV_REAL']
   return error
 
@@ -146,5 +156,4 @@ def compare_model(test_data, test_x,model, url_path):
     #all_error[str(i)] = np.sqrt(error.loc[:, error.columns != 'Accident_Type_Error'].mean())
     Accident_Type_Error.append(Acc_error['Accident_Type_Error'].mean())
     i+=1
-  #all_error.append(pd.DataFrame(Accident_Type_Error, index=['Accident_Type_Error']))
   return allmodel_Acc_error_mean_sqrt,allmodel_victim_error_mean_sqrt,allmodel_Acc_error_mean,allmodel_victim_error_mean

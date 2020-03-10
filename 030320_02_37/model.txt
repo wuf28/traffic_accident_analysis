@@ -1,0 +1,5 @@
+p:  l1, C=1.0  
+Logistic regression parameter {'C': 1.0, 'class_weight': 'balanced', 'dual': False, 'fit_intercept': True, 'intercept_scaling': 1, 'l1_ratio': None, 'max_iter': 100, 'multi_class': 'multinomial', 'n_jobs': None, 'penalty': 'l1', 'random_state': None, 'solver': 'saga', 'tol': 0.0001, 'verbose': 0, 'warm_start': False}
+Logistic regression Train Accuracy :  0.5431672074520685 
+
+Logistic regression Test Accuracy :  0.5593390542267664 

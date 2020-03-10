@@ -48,9 +48,6 @@ def test_parameter_CV(X_train,y_train,test_x,test_y,cv,C,penalty,classweight,mul
   print('1：No Injury\n 2:Injury\n 3:Fatal\n')
   l = ['p','c','cv','sev_T1_P1','sev_T2_P2','sev_T3_P3','sev_T1_P2','sev_T1_P3','sev_T2_P1','sev_T2_P3','sev_T3_P1','sev_T3_P2','Accuracy']
   result =pd.DataFrame(columns=l)
-  # cv =[3,5]
-  # C = range(10,30,10)
-  # penalty = [0,0.5,1.0]
   all_model = []
   i = 0
   for C_test in C:
@@ -71,10 +68,11 @@ def test_parameter_CV(X_train,y_train,test_x,test_y,cv,C,penalty,classweight,mul
         i+=1
   return result, all_model
 
+
 def build_model_LR(X_train,y_train,test_x,test_y,C,penalty,classweight,multiclass,solvertype,cv=0):
       if cv == 0:
           result, all_model = test_parameter(X_train,y_train,test_x,test_y,C,penalty,classweight,multiclass,solvertype)
-           csv_name = 'LR_pnlt_{}_cw_{}_mltcls_{}_svr_{}_mdlnum_{}_noncv_accuracy.csv'.format(penalty,classweight,multiclass,solvertype,len(all_model))
+          csv_name = 'LR_pnlt_{}_cw_{}_mltcls_{}_svr_{}_mdlnum_{}_noncv_accuracy.csv'.format(penalty,classweight,multiclass,solvertype,len(all_model))
       else:
           result, all_model = test_parameter_CV(X_train,y_train,test_x,test_y,cv,C,penalty,classweight,multiclass,solvertype)
           csv_name = 'LRCV_pnlt_{}_cw_{}_mltcls_{}_svr_{}_mdlnum_{}_cv_{}_accuracy.csv'.format(penalty,classweight,multiclass,solvertype,len(all_model),cv)

@@ -82,6 +82,36 @@ def get_person_year_category(data_input):
 
     return data_input
 
+def get_hour_category(data_input):
+#     data_input = data_clean_columns(data_input,['C_HOUR'], pm.v_num)
+    data_input['C_HOUR'] = data_input['C_HOUR'].astype(int)
+    bins = [data_input['C_HOUR'].min(),6,12,18,data_input['C_HOUR'].max()]
+    labels = range(1,len(bins))
+    data_input['C_HOUR'] = pd.cut(data_input.C_HOUR,bins, labels=labels, include_lowest=True)
+    data_input['C_HOUR'] = data_input['C_HOUR'].astype(int)
+    data_input['C_HOUR'] = data_input['C_HOUR'].astype(int)
+    return data_input
+
+def get_month_category(data_input):
+#     data_input = data_clean_columns(data_input,['C_MNTH'], pm.v_num)
+    data_input['C_MNTH'] = data_input['C_MNTH'].astype(int)
+    bins = [data_input['C_MNTH'].min(),3,6,9,data_input['C_MNTH'].max()]
+    labels = range(1,len(bins))
+    data_input['C_MNTH'] = pd.cut(data_input.C_MNTH,bins, labels=labels, include_lowest=True)
+    data_input['C_MNTH'] = data_input['C_MNTH'].astype(int)
+    data_input['C_MNTH'] = data_input['C_MNTH'].astype(int)
+    return data_input
+
+def get_dayofweek_category(data_input):
+#     data_input = data_clean_columns(data_input,['C_MNTH'], pm.v_num)
+    data_input['C_WDAY'] = data_input['C_WDAY'].astype(int)
+    weekdays = [1,2,3,4,5]
+    weekend = [6,7]
+    data_input.loc[data_input['C_WDAY'].isin(weekdays),'C_WDAY'] =1
+    data_input.loc[data_input['C_WDAY'].isin(weekend),'C_WDAY'] =0
+    data_input['C_WDAY'] = data_input['C_WDAY'].astype(int)
+    return data_input
+
 def modify_data(data_input,columns):
 
     for col in columns:
@@ -92,7 +122,12 @@ def modify_data(data_input,columns):
             data_input.loc[data_input['P_SEX'] == 'F', 'P_SEX'] = 0
         elif col == 'P_AGE':
             data_input = get_person_year_category(data_input)
-
+        elif col == 'C_HOUR':
+            data_input = get_hour_category(data_input)
+        elif col == 'C_MNTH':
+            data_input = get_month_category(data_input)
+        elif col == 'C_WDAY':
+            data_input = get_dayofweek_category(data_input)
     return data_input
 
 def get_data_stats(data_input,columns):
